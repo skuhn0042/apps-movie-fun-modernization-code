@@ -19,7 +19,7 @@ public class Application {
     }
 
     @Bean
-    public ServletRegistrationBean actionServletRegistration(ActionServlet actionServlet) {
+    public ServletRegistrationBean actionServletRegistration(MovieServlet actionServlet) {
         return new ServletRegistrationBean(actionServlet, "/moviefun/*");
     }
 
