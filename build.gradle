@@ -1,0 +1,75 @@
+buildscript {
+    ext {
+        springBootVersion = "1.4.2.RELEASE"
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath 'org.cloudfoundry:cf-gradle-plugin:1.0.1'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: "java"
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+apply plugin: "cloudfoundry"
+
+group = "org.superbiz"
+version = "1.1.0-SNAPSHOT"
+
+description = "OpenEJB :: Web Examples :: Moviefun"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+dependencies {
+    compile "taglibs:standard:1.1.2"
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-tomcat"
+    compile "org.apache.tomcat.embed:tomcat-embed-jasper:8.5.6"
+    compile "javax.servlet:jstl:1.2"
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    compile "mysql:mysql-connector-java:5.1.40"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.7.0"
+    compile "commons-lang:commons-lang:2.4"
+    compile "org.apache.tika:tika-core:1.14"
+    compile "com.amazonaws:aws-java-sdk:1.11.74"
+    compile "org.apache.tomee:javaee-api:7.0"
+    compile "org.apache.geronimo.specs:geronimo-osgi-locator:1.1"
+    compile "org.apache.geronimo.components:geronimo-jaspi:2.0.0"
+
+    testCompile "junit:junit:4.12"
+}
+
+cloudfoundry {
+    target = "https://api.sys.longs.pal.pivotal.io"
+    space = "sandbox"
+    application = "moviefun2"
+    file = file("build/libs/moviefun-1.1.0-SNAPSHOT.war")
+    uri = "moviefun2-fantastic-toucan.apps.longs.pal.pivotal.io"
+    memory = 1024
+    instances = 1
+
+    serviceInfos {
+        "movies-mysql" {
+            label = "movies-mysql"
+            provider = "p-mysql"
+            version = "n/a"
+            plan = "p-mysql"
+        }
+    }
+}
+
+task("deploy", type: Exec) {
+    commandLine("cf", "push", "moveifun", "-p", "$buildDir/libs/moviefun-1.1.0-SNAPSHOT.war")
+    workingDir(projectDir)
+}
