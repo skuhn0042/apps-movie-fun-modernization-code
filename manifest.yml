@@ -1,0 +1,25 @@
+---
+memory: 1G
+instances: 1
+applications:
+- name: movie-service
+  path: applications/movie-service/build/libs/movie-service-1.1.0-SNAPSHOT.jar
+  host: sjk-movie-service
+  services:
+  - movie-database
+- name: album-service
+  path: applications/albums-service/build/libs/albums-service-1.1.0-SNAPSHOT.war
+  host: sjk-album-service
+  env:
+    S3_ENDPOINTURL: http://s3.amazonaws.com
+    S3_ACCESSKEY: AKIAI54EWVKCYWEB4KBA
+    S3_SECRETKEY: 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
+    S3_BUCKETNAME: cf-c7810fb0-8f5f-40a6-88e2-709fd422da12
+  services:
+  - album-database
+- name: movie-fun-app2
+  path: applications/movie-fun-app/build/libs/movie-fun-app-1.1.0-SNAPSHOT.war
+  host: movie-fun-app2-daring-wallaby
+  env:
+    ALBUMS_URL: https://sjk-album-service.apps.longs.pal.pivotal.io/albums
+    MOVIES_URL: https://sjk-movie-service.apps.longs.pal.pivotal.io/movies
